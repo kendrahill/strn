@@ -2,6 +2,7 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 import { Avatar, Icon, TokenCard } from './market-ui.jsx';
 import {
   age,
+  availableTokens,
   CURVE_SUPPLY,
   format,
   makeToken,
@@ -13,7 +14,6 @@ import {
   spot,
   supplyAt,
   TARGET,
-  units,
   virtualLiquidity,
   WALLET,
 } from './market.js';
@@ -179,16 +179,175 @@ function Chart({ token: t }) {
         </div>
         <div>
           <dt>{t.pool ? 'Pool tokens' : 'Virtual tokens'}</dt>
-          <dd>{format(t.pool ? t.pool.y : virtualLiquidity(t) / spot(t))} {t.ticker}</dd>
+          <dd>
+            {format(t.pool ? t.pool.y : virtualLiquidity(t) / spot(t))} {t.ticker}
+          </dd>
         </div>
         <div>
           <dt>Raised / target</dt>
-          <dd>{format(t.raised)} / {format(TARGET)} XLM</dd>
+          <dd>
+            {format(t.raised)} / {format(TARGET)} XLM
+          </dd>
         </div>
       </dl>
     </div>
   );
 }
+function TradingChart({ token }) {
+  const trades = [...token.trades].reverse();
+  const prices = trades.map((t) => t.xlm / t.tokens);
+  const low = Math.min(...prices),
+    high = Math.max(...prices);
+  const first = trades[0],
+    last = trades.at(-1);
+  const timeLabel = (time) =>
+    new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const x = (t) =>
+    last.time === first.time ? 245 : 65 + (382 * (t.time - first.time)) / (last.time - first.time);
+  const y = (price) => (high === low ? 87 : 144 - (114 * (price - low)) / (high - low));
+  const points = trades.map((t, i) => x(t) + ',' + y(prices[i])).join(' ');
+  const gradient = useId();
+  return (
+    <section className="chart-box">
+      <div className="flex justify-between items-center">
+        <h3>{token.ticker} / XLM</h3>
+        <span className="chip">Recent trades</span>
+      </div>
+      <div className="chart-caption">
+        Last trade <b>{last ? format(prices.at(-1), 7) + ' XLM' : '—'}</b>
+      </div>
+      {first ? (
+        <svg
+          className="curve-chart"
+          viewBox="0 0 478 178"
+          role="img"
+          aria-label={'Executed prices for the last ' + trades.length + ' trades in XLM per token'}
+        >
+          <defs>
+            <linearGradient id={gradient} x2="0" y2="1">
+              <stop stopColor="var(--cyan)" stopOpacity=".25" />
+              <stop offset="1" stopColor="var(--cyan)" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          {(high === low ? [low] : [low, (high + low) / 2, high]).map((p, i) => (
+            <g key={i}>
+              <line className="gridline" x1="65" x2="450" y1={y(p)} y2={y(p)} />
+              <text x="0" y={y(p) + 3}>
+                {format(p, 6)}
+              </text>
+            </g>
+          ))}
+          <polygon
+            points={x(first) + ',145 ' + points + ' ' + x(last) + ',145'}
+            fill={'url(#' + gradient + ')'}
+          />
+          <polyline points={points} fill="none" stroke="var(--cyan)" strokeWidth="2.5" />
+          {trades.map((t, i) => (
+            <circle key={t.id} cx={x(t)} cy={y(prices[i])} r="3" fill="var(--cyan)">
+              <title>
+                {timeLabel(t.time)} · {format(prices[i], 7)} XLM
+              </title>
+            </circle>
+          ))}
+          <text x="65" y="168">
+            {timeLabel(first.time)}
+          </text>
+          <text x="447" y="168" textAnchor="end">
+            {timeLabel(last.time)}
+          </text>
+        </svg>
+      ) : (
+        <p className="empty-table">The first trade will set the opening price.</p>
+      )}
+    </section>
+  );
+}
+
+function Stake({ token, state, connect, stake }) {
+  const [deposit, setDeposit] = useState(true);
+  const [amount, setAmount] = useState('');
+  const [status, setStatus] = useState('');
+  const locked = token.staked || 0;
+  const free = availableTokens(token);
+  const limit = deposit ? free : locked;
+  const valid = Number(amount) > 0 && Number(amount) <= limit;
+  function submit(e) {
+    e.preventDefault();
+    if (!state.connected) return connect();
+    if (!valid || !stake(token.contract, deposit, Number(amount))) return;
+    setStatus(
+      (deposit ? 'Staked ' : 'Unstaked ') + format(Number(amount), 7) + ' ' + token.ticker + '.'
+    );
+    setAmount('');
+  }
+  return (
+    <form className="swap" onSubmit={submit}>
+      <h3>{token.ticker} staking</h3>
+      <div className="quote-row">
+        <span>Available</span>
+        <b>
+          {format(free, 4)} {token.ticker}
+        </b>
+      </div>
+      <div className="quote-row">
+        <span>Staked</span>
+        <b>
+          {format(locked, 4)} {token.ticker}
+        </b>
+      </div>
+      <div className="side-switch">
+        {[true, false].map((v) => (
+          <button
+            key={String(v)}
+            type="button"
+            className={deposit === v ? 'buy-active' : ''}
+            aria-pressed={deposit === v}
+            onClick={() => {
+              setDeposit(v);
+              setAmount('');
+              setStatus('');
+            }}
+          >
+            {v ? 'Stake' : 'Unstake'}
+          </button>
+        ))}
+      </div>
+      <label htmlFor="stake-amount">Token amount</label>
+      <div className="amount-field">
+        <input
+          id="stake-amount"
+          type="number"
+          min="0"
+          step="any"
+          placeholder="0.00"
+          value={amount}
+          onChange={(e) => {
+            setAmount(e.target.value);
+            setStatus('');
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => {
+            setAmount(String(limit));
+            setStatus('');
+          }}
+        >
+          Max
+        </button>
+      </div>
+      <button className="primary swap-submit" disabled={state.connected && !valid}>
+        {state.connected ? (deposit ? 'Stake ' : 'Unstake ') + token.ticker : 'Connect demo wallet'}
+      </button>
+      <p className="form-status" role="status">
+        {Number(amount) > limit
+          ? 'Amount exceeds your available balance.'
+          : status || 'Demo position. Unstake to trade these tokens.'}
+      </p>
+    </form>
+  );
+}
+
 function Ledger({ token: t }) {
   const [tab, setTab] = useState('Recent trades');
   const owners = Object.entries(t.owners)
@@ -252,18 +411,13 @@ function Ledger({ token: t }) {
   );
 }
 
-function Swap({ token: t, state, asset: initialAsset, connect, execute, quick }) {
+function Swap({ token: t, state, asset, connect, execute, quick }) {
   const [buy, setBuy] = useState(true),
-    [asset, setAsset] = useState(initialAsset),
     [amount, setAmount] = useState(() =>
       quick
         ? String(
             Math.floor(
-              Math.min(
-                100,
-                state.balance[initialAsset],
-                t.pool ? Infinity : units(TARGET - t.raised, initialAsset)
-              ) * 1e7
+              Math.min(100, state.balance[asset], t.pool ? Infinity : TARGET - t.raised) * 1e7
             ) / 1e7
           )
         : ''
@@ -274,10 +428,10 @@ function Swap({ token: t, state, asset: initialAsset, connect, execute, quick })
     [result, setResult] = useState('');
   const timer = useRef(null);
   useEffect(() => () => clearTimeout(timer.current), []);
-  const available = buy ? state.balance[asset] : t.owners[WALLET] || 0,
+  const available = buy ? state.balance[asset] : availableTokens(t),
     input = Number(amount),
     inputUnit = buy ? asset : t.ticker;
-  const max = buy && !t.pool ? Math.min(available, units(TARGET - t.raised, asset)) : available;
+  const max = buy && !t.pool ? Math.min(available, TARGET - t.raised) : available;
   const q = quote(t, buy, input, asset);
   const error =
     amount && input > 0
@@ -336,19 +490,6 @@ function Swap({ token: t, state, asset: initialAsset, connect, execute, quick })
             </button>
           ))}
         </div>
-        <label htmlFor="trade-asset">Reserve asset</label>
-        <select
-          id="trade-asset"
-          value={asset}
-          onChange={(e) => {
-            setAsset(e.target.value);
-            setAmount('');
-            setResult('');
-          }}
-        >
-          <option>XLM</option>
-          <option>USDC</option>
-        </select>
         <label htmlFor="trade-amount">You pay</label>
         <div className="amount-field">
           <input
@@ -429,6 +570,8 @@ function Swap({ token: t, state, asset: initialAsset, connect, execute, quick })
   );
 }
 export function MarketDialog({ token: t, onClose, ...props }) {
+  const [curve, setCurve] = useState(false);
+  const [staking, setStaking] = useState(false);
   const [copied, setCopied] = useState(false);
   return (
     <Dialog onClose={onClose} className="market-dialog">
@@ -467,12 +610,41 @@ export function MarketDialog({ token: t, onClose, ...props }) {
         </details>
       </div>
       {t.description && <p className="description">{t.description}</p>}
+      {Object.values(t.links || {}).some(Boolean) && (
+        <div className="project-links">
+          {Object.entries(t.links)
+            .filter(([, url]) => /^https?:\/\//i.test(url))
+            .map(([label, url]) => (
+              <a href={url} key={label} target="_blank" rel="noopener noreferrer">
+                {label} ↗
+              </a>
+            ))}
+        </div>
+      )}
       <div className="detail-grid">
         <div>
-          <Chart token={t} />
-          <Ledger token={t} />
+          <div className="small-tabs panel-tabs">
+            <button aria-pressed={!curve} onClick={() => setCurve(false)}>
+              Trading chart
+            </button>
+            <button aria-pressed={curve} onClick={() => setCurve(true)}>
+              Bonding curve
+            </button>
+          </div>
+          {curve ? <Chart token={t} /> : <TradingChart token={t} />}
         </div>
-        <Swap token={t} {...props} />
+        <div className="action-panel">
+          <div className="small-tabs panel-tabs">
+            <button aria-pressed={!staking} onClick={() => setStaking(false)}>
+              Trade
+            </button>
+            <button aria-pressed={staking} onClick={() => setStaking(true)}>
+              Staking
+            </button>
+          </div>
+          {staking ? <Stake token={t} {...props} /> : <Swap token={t} {...props} />}
+        </div>
+        <Ledger token={t} />
       </div>
     </Dialog>
   );
@@ -486,12 +658,46 @@ export function LaunchDialog({ onClose, state, create, connect }) {
     [initial, setInitial] = useState(''),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
+  const [logo, setLogo] = useState('');
+  const [links, setLinks] = useState({ Website: '', 'X / Twitter': '', Discord: '' });
+  const [reading, setReading] = useState(false);
+  async function uploadLogo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    event.target.value = '';
+    setError('');
+    if (
+      !['image/png', 'image/jpeg', 'image/webp'].includes(file.type) ||
+      file.size > 4 * 1024 * 1024
+    ) {
+      setError('Choose a PNG, JPEG, or WebP under 4 MB.');
+      return;
+    }
+    setReading(true);
+    try {
+      const bitmap = await createImageBitmap(file);
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 128;
+      const ratio = Math.min(128 / bitmap.width, 128 / bitmap.height);
+      const w = bitmap.width * ratio,
+        h = bitmap.height * ratio;
+      canvas.getContext('2d').drawImage(bitmap, (128 - w) / 2, (128 - h) / 2, w, h);
+      bitmap.close();
+      setLogo(canvas.toDataURL('image/webp', 0.85));
+    } catch {
+      setError('This image could not be read. Choose another logo.');
+    } finally {
+      setReading(false);
+    }
+  }
   const amount = Number(initial) || 0;
   const draft = {
     ...makeToken({
       name: name.trim() || 'Your token',
       ticker: ticker || 'TOKEN',
       description: description.trim(),
+      logo,
+      links,
       preset,
     }),
     raised: Math.max(0, Math.min(TARGET, amount)),
@@ -570,6 +776,44 @@ export function LaunchDialog({ onClose, state, create, connect }) {
               rows={3}
             />
           </label>
+          <fieldset className="project-profile">
+            <legend>
+              Project profile <small>(optional)</small>
+            </legend>
+            <label>
+              Token logo
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                disabled={reading}
+                onChange={uploadLogo}
+              />
+            </label>
+            {logo && (
+              <button type="button" onClick={() => setLogo('')}>
+                Remove logo
+              </button>
+            )}
+            {Object.entries(links).map(([label, url]) => (
+              <label key={label}>
+                {label}
+                <input
+                  type="url"
+                  pattern="https?://.+"
+                  title="Enter a full http or https URL"
+                  placeholder={
+                    label === 'Website'
+                      ? 'https://yourproject.com'
+                      : label === 'Discord'
+                      ? 'https://discord.gg/…'
+                      : 'https://x.com/…'
+                  }
+                  value={url}
+                  onChange={(e) => setLinks({ ...links, [label]: e.target.value.trim() })}
+                />
+              </label>
+            ))}
+          </fieldset>
           <label>
             Curve preset
             <select value={preset} onChange={(e) => setPreset(e.target.value)}>
@@ -594,7 +838,7 @@ export function LaunchDialog({ onClose, state, create, connect }) {
               <b>XLM</b>
             </div>
           </label>
-          <button disabled={busy} className="primary swap-submit">
+          <button disabled={busy || reading} className="primary swap-submit">
             <Icon name="plus" />
             {busy ? 'Creating…' : state.connected ? 'Launch token' : 'Connect demo wallet'}
           </button>

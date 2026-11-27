@@ -5,6 +5,8 @@ import { Change, Icon, Meter, TokenCard } from './market-ui.jsx';
 import { LaunchDialog, MarketDialog } from './market-dialogs.jsx';
 import {
   DEMO_KEY,
+  availableTokens,
+  updateStake,
   format,
   loadMarket,
   progress,
@@ -14,7 +16,6 @@ import {
   short,
   TARGET,
   tick,
-  units,
   WALLET,
 } from './market.js';
 import './terminal.css';
@@ -71,7 +72,7 @@ function Spotlight({ token: t, asset, open }) {
           <span>24h</span>
           <i /> <span>Volume</span>
           <strong>
-            {format(units(t.volume, asset))} {asset}
+            {format(t.volume)} {asset}
           </strong>
         </div>
         <div className="hero-bottom">
@@ -82,7 +83,7 @@ function Spotlight({ token: t, asset, open }) {
             </div>
             <Meter value={pct} smooth />
             <small>
-              {format(units(t.raised, asset))} / {format(units(TARGET, asset))} {asset} to DEX
+              {format(t.raised)} / {format(TARGET)} {asset} to DEX
             </small>
           </div>
           <button className="quick" onClick={() => open(t.contract, true)}>
@@ -107,11 +108,11 @@ function Overview({ tokens, asset }) {
         [
           'chart-no-axes-column-increasing',
           '24h volume',
-          format(units(volume, asset)),
+          format(volume),
           asset,
           'blue',
         ],
-        ['coins', 'Total liquidity', format(units(reserve, asset)), asset, 'violet'],
+        ['coins', 'Total liquidity', format(reserve), asset, 'violet'],
         ['orbit', 'Active curves', format(tokens.filter((t) => !t.pool).length), '', 'teal'],
       ].map(([icon, label, num, unit, color]) => (
         <div className="overview-row" key={label}>
@@ -130,8 +131,8 @@ function Overview({ tokens, asset }) {
 function App() {
   const [state, setState] = useState(loadMarket),
     current = useRef(state);
-  const [asset, setAsset] = useState('XLM'),
-    [query, setQuery] = useState(''),
+  const asset = 'XLM';
+  const [query, setQuery] = useState(''),
     [filter, setFilter] = useState(0),
     [dialog, setDialog] = useState(null),
     [message, setMessage] = useState('');
@@ -200,7 +201,7 @@ function App() {
     const s = current.current,
       t = s.tokens.find((t) => t.contract === contract),
       q = quote(t, buy, amount, base);
-    if (!s.connected || !q || amount > (buy ? s.balance[base] : t.owners[WALLET] || 0))
+    if (!s.connected || !q || amount > (buy ? s.balance[base] : availableTokens(t)))
       return { message: 'Balance or liquidity changed. Check the new quote.' };
     if (q.output < floor)
       return { message: 'Price moved beyond your slippage tolerance. Review and retry.' };
@@ -218,6 +219,14 @@ function App() {
         t.ticker +
         ' · Simulation complete',
     };
+  }
+  function stake(contract, deposit, amount) {
+    const s = current.current;
+    const token = s.tokens.find(t => t.contract === contract);
+    const updated = s.connected && updateStake(token, deposit, amount);
+    if (!updated) return false;
+    commit(() => ({ ...s, tokens: s.tokens.map(t => t === token ? updated : t) }));
+    return true;
   }
   function create(draft, amount) {
     const s = current.current;
@@ -251,7 +260,6 @@ function App() {
           <div className="brand-group">
             <a className="brand-link" href="/" aria-label="Saturn home">
               <img src={logo} alt="" />
-              <span>Saturn</span>
             </a>
             <span className="nav-divider" />
             <span className="network-pill">
@@ -303,7 +311,7 @@ function App() {
             <h1>
               Launchpad<span className="heading-dot">.</span>
             </h1>
-            <p>Discover and trade tokens on Stellar bonding curves.</p>
+            <p>Launch, trade, and stake tokens on Stellar.</p>
           </div>
           <div className="simulation">
             <span className="small-dot" />
@@ -328,16 +336,7 @@ function App() {
               <h2 id="discovery-title">Token discovery</h2>
               <span className="count font-mono">{visible.length}</span>
             </div>
-            <div className="reserve-control">
-              <span>Base asset</span>
-              <div>
-                {['XLM', 'USDC'].map((v) => (
-                  <button key={v} aria-pressed={v === asset} onClick={() => setAsset(v)}>
-                    {v}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <span className="chip">XLM markets</span>
           </div>
           <div className="filter-tabs" aria-label="Token filters">
             {filters.map(([name, icon], i) => (
@@ -394,6 +393,7 @@ function App() {
           asset={asset}
           connect={wallet}
           execute={execute}
+          stake={stake}
           onClose={() => setDialog(null)}
         />
       )}

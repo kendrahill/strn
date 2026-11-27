@@ -23,7 +23,6 @@ const fixtures = [
 export const format = (n, digits = 0) =>
   Number(n).toLocaleString('en-US', { maximumFractionDigits: digits });
 export const short = (s) => s.slice(0, 4) + '…' + s.slice(-4);
-export const units = (xlm, asset) => (asset === 'USDC' ? xlm * XLM_USD : xlm);
 export const age = (time) => {
   const m = Math.max(0, Math.floor((Date.now() - time) / 60000));
   return m < 1
@@ -74,6 +73,8 @@ export function makeToken({
   ticker,
   art = 'custom',
   preset = PRESETS[0],
+  logo = '',
+  links = {},
   description = '',
   creator = WALLET,
   contract,
@@ -85,6 +86,9 @@ export function makeToken({
     art,
     preset,
     description,
+    logo,
+    links,
+    staked: 0,
     creator,
     contract,
     time,
@@ -94,9 +98,18 @@ export function makeToken({
     volume: 0,
     verified: false,
     trades: [],
-    history: [0],
+    history: [priceAt(0, preset)],
     owners: {},
   };
+}
+
+export const availableTokens = (t) => Math.max(0, (t.owners[WALLET] || 0) - (t.staked || 0));
+
+export function updateStake(t, deposit, amount) {
+  const staked = t.staked || 0;
+  const limit = deposit ? availableTokens(t) : staked;
+  if (!Number.isFinite(amount) || amount <= 0 || amount > limit) return null;
+  return { ...t, staked: deposit ? staked + amount : staked - amount };
 }
 
 function fillPool(token) {
@@ -104,7 +117,8 @@ function fillPool(token) {
 }
 export function quote(t, buy, amount, asset) {
   if (!Number.isFinite(amount) || amount <= 0) return null;
-  const input = buy && asset === 'USDC' ? amount / XLM_USD : amount;
+  if (asset !== 'XLM') return null;
+  const input = amount;
   const supply = supplyAt(t.raised, t.preset);
   if (!t.pool && (buy ? input > TARGET - t.raised + 1e-7 : input > supply)) return null;
   let output;
@@ -121,7 +135,7 @@ export function quote(t, buy, amount, asset) {
   return {
     input,
     output,
-    shown: buy ? output : units(output, asset),
+    shown: output,
     impact: Math.max(0, (1 - output / ideal) * 100),
   };
 }
@@ -204,7 +218,7 @@ export function initialMarket() {
           account: addresses[(i + j) % 10].creator,
           buy: (i + j) % 3 !== 1,
           xlm,
-          tokens: xlm / spot(t),
+          tokens: xlm / t.history[23 - j],
           ticker,
           contract: t.contract,
         };
@@ -221,7 +235,7 @@ export function initialMarket() {
     contract: dex.contract,
     time: now - 18000,
   });
-  return { tokens, events, balance: { XLM: 10000, USDC: 2400 }, connected: false };
+  return { tokens, events, balance: { XLM: 10000 }, connected: false };
 }
 
 export function loadMarket() {
@@ -233,7 +247,7 @@ export function loadMarket() {
       saved.state.balance &&
       Array.isArray(saved.state.events)
     )
-      return saved.state;
+      return { ...saved.state, balance: { XLM: saved.state.balance.XLM } };
   } catch {
     /* Browser storage is optional. */
   }

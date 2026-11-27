@@ -2,15 +2,16 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   CURVE_SUPPLY, makeToken, PRESETS, priceAt, progress, quote, recordTrade,
-  replaceToken, spot, TARGET, WALLET, XLM_USD,
+  replaceToken, spot, TARGET, WALLET, availableTokens, updateStake,
 } from './market.js';
 
 for (const preset of PRESETS) {
-  test(preset + ' quotes reverse across XLM and USDC', () => {
+  test(preset + ' quotes reverse in XLM', () => {
     const initial = makeToken({ name: 'Test token', ticker: 'TEST', preset });
-    const buy = quote(initial, true, 120, 'USDC');
+    assert.equal(quote(initial, true, 120, 'USDC'), null);
+    const buy = quote(initial, true, 120, 'XLM');
     const funded = recordTrade(initial, true, buy, WALLET);
-    assert.equal(funded.raised, 120 / XLM_USD);
+    assert.equal(funded.raised, 120);
     assert.equal(funded.holders, 1);
     assert.ok(spot(funded) > spot(initial));
     assert.ok(buy.impact > 0);
@@ -36,3 +37,12 @@ for (const preset of PRESETS) {
     assert.equal(replaceToken(state, graduated, swapped).events.filter(e => e.graduated).length, 1);
   });
 }
+
+test('stake reserves holdings until withdrawn, including older saved tokens', () => {
+  const token = { owners: { [WALLET]: 30 } };
+  const position = updateStake(token, true, 20);
+  assert.equal(availableTokens(position), 10);
+  assert.equal(updateStake(position, true, 11), null);
+  assert.equal(updateStake(position, false, 21), null);
+  assert.equal(availableTokens(updateStake(position, false, 20)), 30);
+});

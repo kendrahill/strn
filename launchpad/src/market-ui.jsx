@@ -1,6 +1,6 @@
 import React, { useId } from 'react';
 import sprite from './terminal-icons.svg?no-inline';
-import { age, cap, format, progress, short, TARGET, units, XLM_USD } from './market.js';
+import { age, cap, format, progress, short, TARGET, XLM_USD } from './market.js';
 
 export function Icon({ name, size = 17, className = '' }) {
   return (
@@ -106,7 +106,7 @@ const drawings = {
 export function Avatar({ token }) {
   return (
     <span className={'avatar art-' + token.art} aria-hidden="true">
-      {drawings[token.art] ? (
+      {token.logo ? <img src={token.logo} alt="" /> : drawings[token.art] ? (
         <svg viewBox="0 0 64 64">{drawings[token.art]}</svg>
       ) : (
         token.ticker.slice(0, 2)
@@ -208,10 +208,10 @@ export function TokenCard({ token: t, asset = 'XLM', onOpen }) {
         <div>
           <div className="label">Market cap</div>
           <strong className="font-mono tabular-nums">
-            {format(units(cap(t), asset))} <small>{asset}</small>
+            {format(cap(t))} <small>{asset}</small>
           </strong>
           <div className="usd font-mono">
-            ${format(cap(t) * XLM_USD)} USD{asset === 'USDC' && ' · ' + format(cap(t)) + ' XLM'}
+            ${format(cap(t) * XLM_USD)} USD
           </div>
         </div>
         <div className="trend">
@@ -227,7 +227,7 @@ export function TokenCard({ token: t, asset = 'XLM', onOpen }) {
         <Meter value={pct} />
         <div className="card-bottom flex justify-between items-center gap-2">
           <span className="font-mono">
-            {format(units(t.raised, asset))} / {format(units(TARGET, asset))} {asset}
+            {format(t.raised)} / {format(TARGET)} {asset}
             {t.pool ? '' : ' to DEX'}
           </span>
           <span className="flex items-center gap-1" title={format(t.holders) + ' holders'}>
