@@ -1,7 +1,7 @@
 :root {
   color-scheme: dark;
   font: 100% / 1.5 Inter, system-ui, sans-serif;
-  background: #11131a;
+  background: #080909;
   color: #f4f1ff;
   --surface: #1a1d27;
   --line: #3b3e51;
@@ -14,8 +14,7 @@ body { margin: 0; }
 .shell { width: min(100% - 2.5rem, 64rem); margin-inline: auto; }
 .topbar { min-height: 5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: .75rem; color: inherit; font-size: 1.3rem; font-weight: 750; text-decoration: none; }
-.planet { border-radius: 50%; width: 1.1rem; height: 1.1rem; background: white; position: relative; margin-inline: .2rem; }
-.planet::after { content: ''; position: absolute; inset: .35rem -.4rem; border: 1px solid white; border-radius: 50%; transform: rotate(-24deg); }
+.mark { display: block; width: 2rem; height: 2rem; }
 .wallet, .input-row { display: flex; align-items: center; gap: .65rem; }
 .network { color: var(--accent); font-size: .875rem; font-weight: 650; }
 main { padding-block: clamp(2rem, 5vw, 4rem) 4rem; }

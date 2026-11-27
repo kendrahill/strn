@@ -6,8 +6,7 @@ a:focus-visible { outline: 2px solid var(--teal); outline-offset: 5px; }
 .shell { width: min(100% - 3rem, 76rem); margin-inline: auto; }
 .top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 5.5rem; border-bottom: 1px solid var(--line); }
 .brand { display: inline-flex; align-items: center; gap: .65rem; font-size: 1.4rem; font-weight: 760; letter-spacing: -.045em; text-decoration: none; }
-.mark { position: relative; display: inline-block; border-radius: 50%; width: 1.05rem; height: 1.05rem; background: white; margin-inline: .25rem; }
-.mark::after { content: ''; position: absolute; inset: .33rem -.38rem; border: 1px solid white; border-radius: 50%; transform: rotate(-25deg); }
+.mark { display: block; width: 2rem; height: 2rem; }
 nav, .actions, .footer { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(.8rem, 2.5vw, 1.8rem); }
 nav a, .footer a { text-decoration: none; }
 nav a:hover, .footer a:hover, .text-link:hover { color: var(--teal); }
