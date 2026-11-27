@@ -68,11 +68,20 @@ export async function preview(owner, contract, method, args) {
   return { transaction: rpc.assembleTransaction(transaction, response).build(), result, owner };
 }
 
-export async function trade(project, owner, buy, quantity) {
+async function marketQuote(project, buy, quantity) {
   const pool = Boolean(project.reserves);
   const contract = pool ? project.addresses.pool : project.addresses.curve;
   const args = [bool(buy), int(quantity)];
   const quote = await read(contract, pool ? 'quote_swap' : 'quote_curve', args);
+  return { pool, contract, args, quote };
+}
+
+export async function quoteTrade(project, buy, quantity) {
+  return (await marketQuote(project, buy, quantity)).quote;
+}
+
+export async function trade(project, owner, buy, quantity) {
+  const { pool, contract, args, quote } = await marketQuote(project, buy, quantity);
   const prepared = await preview(owner, contract, pool ? 'swap' : 'trade_curve', [
     address(owner), ...args, int(quote.input), int(quote.output), day(BigInt(Math.floor(Date.now() / 1000) + 300)),
   ]);

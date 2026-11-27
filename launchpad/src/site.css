@@ -12,15 +12,13 @@ nav a, .footer a { text-decoration: none; }
 nav a:hover, .footer a:hover, .text-link:hover { color: var(--teal); }
 .nav-action { border: 1px solid var(--line); padding: .55rem .8rem; border-radius: .5rem; }
 .nav-action span { color: var(--muted); margin-left: .25rem; font-size: .875rem; }
-.hero { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: clamp(2rem, 6vw, 6rem); padding-block: clamp(3rem, 8vw, 7rem); }
+.hero { padding-block: clamp(3.5rem, 9vw, 8rem); }
 .eyebrow { font-size: .875rem; text-transform: uppercase; letter-spacing: .14em; font-weight: 680; color: var(--teal); margin-bottom: .8rem; }
 h1, h2, h3 { line-height: 1.04; letter-spacing: -.055em; }
 h1 { font-size: clamp(3rem, 7.25vw, 6.75rem); }
 h2 { font-size: clamp(2rem, 4.5vw, 4rem); }
 h3 { font-size: 1.6rem; }
 .lede { margin-block: 1.4rem 1.6rem; max-width: 36rem; font-size: clamp(1rem, 1.8vw, 1.22rem); color: var(--muted); }
-.hero-benefit { margin-bottom: 1.45rem; color: var(--muted); }
-.hero-benefit strong { color: var(--ink); }
 .button { display: inline-flex; align-items: center; justify-content: center; min-height: 3rem; padding: .65rem 1rem; text-decoration: none; border: 1px solid var(--line); border-radius: .45rem; font-weight: 650; }
 .primary { background: var(--teal); color: #071510; border-color: var(--teal); }
 .primary:hover { background: #4ae8c8; }
@@ -31,6 +29,9 @@ h3 { font-size: 1.6rem; }
 .section { border-top: 1px solid var(--line); padding-block: clamp(2.8rem, 7vw, 5.5rem); }
 .columns, .features { display: grid; gap: clamp(1.5rem, 5vw, 4rem); }
 .columns { grid-template-columns: 1fr 1fr; }
+.genesis { align-items: center; }
+.genesis .hero-art { width: min(100%, 26rem); justify-self: end; }
+.genesis .section-copy { margin-top: 1rem; }
 .section-copy, .features p, .docs p, .docs li { color: var(--muted); }
 .section-copy strong { color: var(--ink); }
 .facts { display: flex; flex-wrap: wrap; gap: 1rem 2.25rem; border-block: 1px solid var(--line); padding-block: 1rem; margin-block: 1.3rem; }
@@ -38,6 +39,9 @@ h3 { font-size: 1.6rem; }
 .facts dd { color: var(--ink); font-weight: 670; }
 .features { grid-template-columns: repeat(3, 1fr); margin-block: 2rem; }
 .features p { margin-top: .6rem; }
+.preview-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1rem; }
+.preview-copy { color: var(--muted); margin-block: .9rem 1.4rem; }
+.app-preview { background: #101211; border: 1px solid var(--line); border-radius: .9rem; width: 100%; height: 36rem; display: block; }
 .footer { border-top: 1px solid var(--line); padding-block: 1.8rem; color: var(--muted); }
 .footer .brand { color: var(--ink); margin-right: auto; }
 .docs { max-width: 56rem; padding-block: 3rem; }
@@ -46,12 +50,13 @@ h3 { font-size: 1.6rem; }
 .docs p, .docs ol { margin-top: 1rem; }
 .docs li + li { margin-top: .65rem; }
 @media (max-width: 48rem) {
-  .hero, .columns { grid-template-columns: 1fr; }
-  .hero-art { max-width: 32rem; }
+  .columns { grid-template-columns: 1fr; }
+  .genesis .hero-art { justify-self: start; }
 }
 @media (max-width: 35rem) {
   .shell { width: calc(100% - 2rem); }
   .top { align-items: flex-start; flex-direction: column; padding-block: 1rem; }
   .top nav { gap: .75rem; }
   .features { grid-template-columns: 1fr; }
+  .app-preview { height: 47rem; }
 }

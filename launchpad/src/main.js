@@ -1,11 +1,13 @@
 import { getNetworkDetails, requestAccess, signTransaction } from '@stellar/freighter-api';
 import { TransactionBuilder, scValToNative } from '@stellar/stellar-sdk';
-import { amount, create, initialToken, network, project, server, stake, trade, units, waitForTransaction } from './saturn.js';
+import { amount, create, initialToken, network, project, quoteTrade, server, stake, trade, units, waitForTransaction } from './saturn.js';
 import './style.css';
 
 const element = (id) => document.getElementById(id);
 const hex = (bytes) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
 const form = element('action-form');
+const previewMode = new URLSearchParams(window.location.search).get('preview') === '1';
+if (previewMode) document.body.classList.add('preview-mode');
 const tabs = [...document.querySelectorAll('[data-view]')];
 const titles = { trade: 'Trade', stake: 'Stake and claim', create: 'Create project' };
 const stakingLabels = { deposit: 'Queue stake', roll: 'Advance staking days', settle: 'Settle one reward day', claim: 'Claim rewards' };
@@ -36,6 +38,7 @@ function metrics(container, entries) {
 function dismiss() {
   prepared = undefined;
   element('review').hidden = true;
+  element('quote').hidden = true;
 }
 
 function updateInputs() {
@@ -43,6 +46,7 @@ function updateInputs() {
   if (direction) {
     const isPoolBuy = currentProject?.reserves && direction.value === 'buy';
     element('trade-amount-label').textContent = `Principal amount (${isPoolBuy ? 'XLM' : currentProject?.symbol ?? 'tokens'})`;
+    element('simulate').textContent = owner ? 'Simulate transaction' : 'Get quote';
   }
   const stakeMode = form.elements.namedItem('stakeMode');
   if (stakeMode) {
@@ -58,7 +62,7 @@ function renderForm() {
   const fields = {
     trade: `<div class="form-row">
       <div><label for="direction">Side</label><select id="direction" name="direction"><option value="buy">Buy</option><option value="sell">Sell</option></select></div>
-      <div><label for="trade-amount" id="trade-amount-label">Principal amount</label><input id="trade-amount" name="quantity" inputmode="decimal" required></div>
+      <div><label for="trade-amount" id="trade-amount-label">Principal amount</label><input id="trade-amount" name="quantity" inputmode="decimal" placeholder="0.00" required></div>
     </div>`,
     stake: `<div class="form-row">
       <div><label for="stake-mode">Action</label><select id="stake-mode" name="stakeMode">${Object.entries(stakingLabels).map(([value, label]) => `<option value="${value}">${label}</option>`).join('')}</select></div>
@@ -70,7 +74,7 @@ function renderForm() {
     </div>
     <div><label for="description">Description</label><textarea id="description" name="description" maxlength="512" rows="3"></textarea></div>`,
   };
-  form.innerHTML = `${fields[view]}<button type="submit">Simulate transaction</button>`;
+  form.innerHTML = `${fields[view]}<button id="simulate" type="submit">Simulate transaction</button>`;
   updateInputs();
 }
 
@@ -116,13 +120,16 @@ async function assertWalletNetwork() {
 }
 
 element('connect').addEventListener('click', () => run('action-status', async () => {
+  if (previewMode) return;
   dismiss();
   owner = undefined;
+  updateInputs();
   element('connect').textContent = 'Connect Freighter';
   const access = await requestAccess();
   if (access.error || !access.address) throw new Error(access.error?.message ?? 'Open Freighter to connect a wallet.');
   await assertWalletNetwork();
   owner = access.address;
+  updateInputs();
   element('connect').textContent = `${owner.slice(0, 6)}…${owner.slice(-4)}`;
   status('action-status', 'Testnet wallet connected.');
 }));
@@ -143,29 +150,41 @@ for (const button of tabs) button.addEventListener('click', () => {
 
 form.addEventListener('input', () => {
   dismiss();
+  status('action-status', '');
   updateInputs();
 });
+
+function tradeDetails(quote, buy, isPrepared) {
+  const token = currentProject.symbol;
+  return [
+    [isPrepared ? 'Maximum sent' : 'Estimated send', `${units(quote.input)} ${buy ? 'XLM' : token}`],
+    [isPrepared ? 'Minimum received' : 'Estimated receive', `${units(quote.output)} ${buy ? token : 'XLM'}`],
+    ['Trading fees included', `${units(quote.xlm_fee)} XLM + ${units(quote.token_fee)} ${token}`],
+  ];
+}
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   const values = new FormData(form);
   run('action-status', async () => {
     dismiss();
-    if (!owner) throw new Error('Connect a Freighter testnet wallet to simulate this action.');
     if (view !== 'create' && !currentProject) throw new Error('Load a project first.');
+    const buy = values.get('direction') === 'buy';
+    if (view === 'trade' && !owner) {
+      status('action-status', 'Getting a testnet quote…');
+      const quote = await quoteTrade(currentProject, buy, amount(values.get('quantity')));
+      metrics(element('quote-details'), tradeDetails(quote, buy, false));
+      element('quote').hidden = false;
+      status('action-status', previewMode ? 'Quote only. Open the full launchpad to trade.' : 'Connect Freighter to simulate a trade.');
+      return;
+    }
+    if (!owner) throw new Error('Connect a Freighter testnet wallet to simulate this action.');
     await assertWalletNetwork();
     status('action-status', 'Simulating on testnet…');
     let details;
     if (view === 'trade') {
-      const buy = values.get('direction') === 'buy';
       prepared = await trade(currentProject, owner, buy, amount(values.get('quantity')));
-      const { quote } = prepared;
-      const token = currentProject.symbol;
-      details = [
-        ['Maximum sent', `${units(quote.input)} ${buy ? 'XLM' : token}`],
-        ['Minimum received', `${units(quote.output)} ${buy ? token : 'XLM'}`],
-        ['Trading fees included', `${units(quote.xlm_fee)} XLM + ${units(quote.token_fee)} ${token}`],
-      ];
+      details = tradeDetails(prepared.quote, buy, true);
     } else if (view === 'stake') {
       const mode = values.get('stakeMode');
       const quantity = mode === 'deposit' ? amount(values.get('quantity')) : undefined;
