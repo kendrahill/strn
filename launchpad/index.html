@@ -3,43 +3,45 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Saturn project markets and staking on Stellar testnet.">
-    <meta name="theme-color" content="#11131a">
-    <title>Saturn Launchpad</title>
+    <meta name="theme-color" content="#080909">
+    <meta name="description" content="Meet Saturn, a launchpad, trading, and staking ecosystem on Stellar. Explore the 100 Genesis NFTs and try the launchpad on testnet.">
+    <title>Saturn · Genesis</title>
+    <link rel="stylesheet" href="/src/site.css">
   </head>
   <body>
-    <header class="shell topbar">
-      <a class="brand" href="./" aria-label="Saturn launchpad home"><span class="planet" aria-hidden="true"></span>Saturn</a>
-      <div class="wallet"><span class="network">Stellar testnet</span><button id="connect" class="secondary">Connect Freighter</button></div>
+    <header class="top shell">
+      <a class="brand" href="/" aria-label="Saturn home"><span class="mark" aria-hidden="true"></span>Saturn</a>
+      <nav aria-label="Main navigation"><a href="#genesis">Genesis</a><a href="/docs/">Docs</a><a class="nav-action" href="/launchpad/">Launchpad <span>Testnet</span></a></nav>
     </header>
-    <main class="shell">
-      <div class="intro"><h1>Launchpad</h1><p>Launch a project token, trade its XLM market, or stake for rewards.</p></div>
-      <form id="lookup" class="lookup">
-        <label for="token">Project token contract</label>
-        <div class="input-row"><input id="token" name="token" required pattern="C[A-Z2-7]{55}" maxlength="56" autocomplete="off" spellcheck="false"><button class="secondary">Load project</button></div>
-      </form>
-      <p id="market-status" class="status" role="status">Loading project…</p>
-      <section id="project" class="market panel" aria-labelledby="project-title" hidden>
-        <div class="market-title"><p id="phase" class="network"></p><h2 id="project-title"></h2><p id="symbol" class="muted"></p></div>
-        <dl id="metrics" class="metrics"></dl>
+    <main>
+      <section class="hero shell" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Initial NFT offering on Stellar</p>
+          <h1 id="hero-title">Saturn begins<br>with Genesis.</h1>
+          <p class="lede">Saturn is building a home for launching, trading, and staking tokens on Stellar. The Genesis sale will help fund that work, with a collection limited to 100 NFTs.</p>
+          <p class="hero-benefit"><strong>10,000 STRN</strong> for Genesis holders, plus future utility.</p>
+          <div class="actions"><a class="button primary" href="#genesis">Explore Genesis</a><a class="button secondary" href="/launchpad/">Try the testnet</a></div>
+        </div>
+        <figure class="hero-art"><img src="/src/genesis-001.svg" width="900" height="900" alt="Official artwork for Saturn Genesis NFT number 1"><figcaption>Genesis 1 / 100</figcaption></figure>
       </section>
-      <nav class="tabs" aria-label="Launchpad actions">
-        <button type="button" data-view="trade" aria-pressed="true">Trade</button>
-        <button type="button" data-view="stake" aria-pressed="false">Stake</button>
-        <button type="button" data-view="create" aria-pressed="false">Create project</button>
-      </nav>
-      <section class="panel action" aria-labelledby="action-title">
-        <h2 id="action-title">Trade</h2>
-        <form id="action-form"></form>
-        <p id="action-status" class="status" role="status"></p>
-        <div id="review" class="review" hidden>
-          <h3>Review transaction</h3>
-          <dl id="details" class="metrics"></dl>
-          <button id="submit" type="button">Sign and submit on testnet</button>
-          <button id="dismiss" class="secondary" type="button">Dismiss</button>
+      <section id="genesis" class="section shell columns" aria-labelledby="genesis-title">
+        <div><p class="eyebrow">The Genesis collection</p><h2 id="genesis-title">A first place in Saturn.</h2></div>
+        <div class="section-copy">
+          <p>Genesis holders will be the first to receive STRN. The Saturn Foundation’s airdrop will deliver <strong>10,000 STRN</strong> to Genesis holders, with future utility to be detailed separately.</p>
+          <dl class="facts"><div><dt>Collection size</dt><dd>100 NFTs</dd></div><div><dt>Sale date and price</dt><dd>To be announced</dd></div></dl>
+          <a class="text-link" href="/docs/#genesis">Read the Genesis details</a>
         </div>
       </section>
+      <section id="vision" class="section shell" aria-labelledby="vision-title">
+        <p class="eyebrow">The Saturn vision</p><h2 id="vision-title">From launch to a living market.</h2>
+        <div class="features">
+          <article><h3>Launch</h3><p>Creators launch a token into an XLM market without supplying the initial XLM liquidity.</p></article>
+          <article><h3>Trade</h3><p>Buyers fund a redeemable bonding curve. When a project graduates, its reserves seed a trading pool.</p></article>
+          <article><h3>Stake</h3><p>Project holders can stake for project-token rewards. The broader vision includes STRN and MOON staking and markets.</p></article>
+        </div>
+        <div class="actions"><a class="button secondary" href="/launchpad/">Open the testnet launchpad</a><a class="text-link" href="/docs/">Read the docs</a></div>
+      </section>
     </main>
-    <script type="module" src="/src/main.js"></script>
+    <footer class="shell footer"><a class="brand" href="/">Saturn</a><a href="/docs/#whitepaper">Whitepaper</a><a href="/docs/">Docs</a></footer>
   </body>
 </html>
