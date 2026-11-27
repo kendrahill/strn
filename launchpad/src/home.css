@@ -347,29 +347,39 @@
   position: relative;
   pointer-events: none;
 }
-.planet-scene img {
-  display: block;
-  width: 135%;
-  height: auto;
-  max-width: none;
-  margin-left: -12%;
-  animation: planet-float 20s ease-in-out infinite alternate;
+.floating-mark {
+  width: min(90%, 30rem);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  mask: url("./saturn-logo.png") center / contain no-repeat;
+  mask-mode: luminance;
+  background: linear-gradient(153deg, #f5fffc 11%, #c0d2d0 41%, #698b87 68%, #8ca8a6 93%);
+  opacity: .58;
+  animation: planet-float 9s ease-in-out infinite alternate;
+}
+.planet-scene[data-concept="aurora"] .floating-mark {
+  opacity: .76;
+  background: linear-gradient(118deg, #233c49 12%, #78c7ae 32%, #e6fcf5 45%, #346b67 53%, #9dacc0 73%, #304749 92%);
+  background-size: 180% 100%;
+  animation: planet-float 9s ease-in-out infinite alternate, aurora-light 15s ease-in-out infinite alternate;
+}
+@keyframes aurora-light {to {background-position: 100% center;}}
+.planet-scene[data-concept="stardust"] .floating-mark {
+  opacity: .88;
+  background: url("./stars-near.svg") 0 0 / 90px 54px, url("./stars-far.svg") 12px 18px / 168px 101px,
+    linear-gradient(140deg, #7c9c9a38, #97cbbe0a);
 }
 .quiet {
   padding: 0.7rem 0.55rem;
   color: #d3dddb;
   font-weight: 550;
 }
-.stars,
-.stars::after {
-  position: absolute;
-  inset: -2%;
-  pointer-events: none;
-  background-repeat: repeat;
-}
-.stars::after {
-  content: "";
-  animation: star-drift 24s ease-in-out infinite alternate;
+.stars {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
 }
 .edition {
   display: flex;
@@ -400,20 +410,10 @@
 }
 @keyframes planet-float {
   from {
-    transform: translateY(3px) rotate(-0.6deg);
+    transform: translateY(6px) rotate(-1.4deg);
   }
   to {
-    transform: translateY(-9px) rotate(1deg);
-  }
-}
-@keyframes star-drift {
-  from {
-    transform: translate(-3px, 0);
-    opacity: 0.55;
-  }
-  to {
-    transform: translate(7px, -5px);
-    opacity: 0.98;
+    transform: translateY(-9px) rotate(1.4deg);
   }
 }
 @media (max-width: 720px) {
@@ -436,20 +436,5 @@
     align-self: center;
     margin: -0.15rem 0 -1rem;
   }
-  .planet-scene img {
-    width: 100%;
-    margin: 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .planet-scene img,
-  .stars::after {
-    animation: none;
-  }
-}
-.stars {
-  background-image: url("./stars-far.svg");
-}
-.stars::after {
-  background-image: url("./stars-near.svg");
+  .floating-mark { width: 86%; margin-block: -6%; }
 }
