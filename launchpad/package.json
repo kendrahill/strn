@@ -1,0 +1,14 @@
+{
+  "name": "saturn-launchpad",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@stellar/freighter-api": "6.0.1",
+    "@stellar/stellar-sdk": "17.4.0",
+    "vite": "8.4.0"
+  }
+}
