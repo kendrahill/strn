@@ -1,0 +1,368 @@
+@font-face {
+  font-family: Geist;
+  src: url('./geist.ttf');
+}
+@font-face {
+  font-family: Geist Mono;
+  src: url('./geistmono.ttf');
+}
+.home {
+  --lav: #c9b8ff;
+  --line: #303038;
+  --muted: #b3b0bd;
+  background: #09090c;
+  color: #f8f7fb;
+  font-family: Geist, system-ui, sans-serif;
+}
+.wrap {
+  width: min(calc(100% - 3rem), 70rem);
+  margin: auto;
+}
+.mast {
+  background: black;
+  border-bottom: 1px solid var(--line);
+}
+.mast-inner,
+.foot,
+.links,
+.mint-title,
+.artifact figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.mast-inner {
+  min-height: 4.6rem;
+}
+.mast a,
+.foot a,
+.links a {
+  text-decoration: none;
+}
+.mast nav {
+  font-size: 0.88rem;
+}
+.outline,
+.paper,
+.solid {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 0.6rem 1rem;
+}
+.home a:hover {
+  color: var(--lav);
+}
+.intro,
+.mint-grid,
+.assets {
+  display: grid;
+  grid-template-columns: 1.12fr 1fr;
+  align-items: center;
+  gap: clamp(2rem, 7vw, 7rem);
+}
+.intro {
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+.kicker,
+.token-label,
+.phases small,
+.artifact small,
+.mint-title span {
+  font: 600 0.72rem/1.4 'Geist Mono', monospace;
+  letter-spacing: 0.11em;
+}
+.kicker {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  color: var(--lav);
+  margin-bottom: 1.25rem;
+}
+.kicker i {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--lav);
+}
+.intro h1 {
+  font-size: clamp(4.5rem, 8.5vw, 8rem);
+  letter-spacing: -0.082em;
+  line-height: 0.89;
+  font-weight: 600;
+}
+.intro h1 em {
+  font: italic 1.04em/0.98 Georgia, serif;
+  color: var(--lav);
+  letter-spacing: -0.085em;
+}
+.intro-text,
+.sub,
+.assets p,
+.phases p,
+.benefits dd {
+  color: var(--muted);
+}
+.intro-text {
+  max-width: 33rem;
+  font-size: 1.13rem;
+  margin: 1.6rem 0 1.9rem;
+}
+.links {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.solid,
+.paper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  font: 600 0.92rem Geist, sans-serif;
+  min-height: 2.9rem;
+}
+.solid {
+  background: var(--lav);
+  color: #171221;
+  border-color: transparent;
+  cursor: pointer;
+}
+.home .solid:hover {
+  color: #171221;
+  background: #d7cbff;
+}
+.solid:disabled {
+  background: #292633;
+  color: #cec4de;
+  cursor: default;
+}
+.paper small {
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+.artifact {
+  border: 1px solid #51495e;
+  background: #17151c;
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: 0 24px 80px #0005;
+  max-width: 30rem;
+  width: 100%;
+  justify-self: end;
+}
+.specimen {
+  background: radial-gradient(ellipse at center, #302842, #111018 73%);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1.18;
+}
+.specimen img {
+  width: 72%;
+  height: auto;
+  border: 1px solid #80748d;
+  border-radius: 4px;
+  transform: rotate(-5deg);
+  box-shadow: 12px 15px 0 #0a090f77;
+}
+.artifact figcaption {
+  padding: 1rem 0.6rem 0.5rem;
+}
+.artifact small,
+.token-label,
+.phases small {
+  color: var(--lav);
+}
+.mint-band {
+  background: #131217;
+  border-block: 1px solid var(--line);
+}
+.mint-grid,
+.chapter {
+  padding-block: clamp(3rem, 6vw, 5rem);
+}
+.home h2 {
+  font-size: clamp(2.5rem, 5vw, 4.6rem);
+  font-weight: 580;
+}
+.sub {
+  margin-top: 1rem;
+  max-width: 42rem;
+}
+.benefits {
+  margin-top: 1.5rem;
+}
+.benefits div {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--line);
+  gap: 0.7rem;
+}
+.benefits dt {
+  font-weight: 600;
+}
+.mint-box,
+.assets article {
+  padding: clamp(1.3rem, 3vw, 2rem);
+  border: 1px solid #44404c;
+  border-radius: 12px;
+  background: #19181e;
+}
+.mint-title span {
+  color: var(--muted);
+}
+.sale-stats {
+  margin: 1.4rem 0;
+}
+.sale-stats div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.sale-stats dt,
+.mint-box p,
+.assets small {
+  color: var(--muted);
+}
+.mint-box button,
+.mint-box progress {
+  width: 100%;
+}
+.mint-box progress {
+  accent-color: var(--lav);
+  height: 0.4rem;
+  margin-bottom: 1rem;
+}
+.mint-box p {
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.chapter {
+  border-bottom: 1px solid var(--line);
+}
+.assets,
+.phases {
+  gap: 1rem;
+  align-items: stretch;
+  margin-top: 2rem;
+}
+.assets {
+  grid-template-columns: repeat(2, 1fr);
+}
+.assets article {
+  background: linear-gradient(125deg, #211d29, #131216);
+}
+.assets article + article {
+  background: linear-gradient(125deg, #1a2426, #111617);
+}
+.assets h3 {
+  font-size: 3rem;
+  margin: 0.6rem 0 1rem;
+}
+.outputs,
+.split {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+  flex-wrap: wrap;
+}
+.outputs span,
+.split b {
+  font: 500 0.85rem 'Geist Mono', monospace;
+  color: var(--lav);
+}
+.outputs span {
+  border: 1px solid #504557;
+  border-radius: 20px;
+  padding: 0.3rem 0.7rem;
+}
+.split b {
+  flex: 1;
+  border-top: 3px solid #a4e7d9;
+  padding-top: 0.6rem;
+  color: #c7eee5;
+}
+.split b + b {
+  border-color: #a89bbc;
+}
+.assets small {
+  font-size: 0.72rem;
+}
+.phases {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  list-style: none;
+  padding: 0;
+}
+.phases li {
+  border-top: 1px solid #585160;
+  padding: 1.2rem 1rem 0 0;
+}
+.phases h3 {
+  margin: 0.8rem 0;
+}
+.phases a {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--lav);
+}
+.foot {
+  padding-block: 1.6rem;
+  color: var(--muted);
+}
+.foot span {
+  margin-right: auto;
+}
+.foot img {
+  width: 1.65rem;
+  height: auto;
+}
+.home :focus-visible {
+  outline: 2px solid var(--lav);
+  outline-offset: 4px;
+}
+@media (max-width: 720px) {
+  .intro,
+  .mint-grid,
+  .assets,
+  .phases {
+    grid-template-columns: 1fr;
+  }
+  .wrap {
+    width: calc(100% - 2.25rem);
+  }
+  .artifact {
+    justify-self: center;
+    max-width: 24rem;
+  }
+  .intro {
+    gap: 2.3rem;
+  }
+  .mast nav {
+    gap: 0.8rem;
+    font-size: 0.8rem;
+  }
+  .outline {
+    padding: 0.45rem 0.65rem;
+  }
+  .intro h1 br {
+    display: none;
+  }
+  .intro h1 em::before {
+    content: ' ';
+  }
+  .intro h1 {
+    font-size: clamp(3.6rem, 12vw, 6rem);
+  }
+  .mint-grid {
+    gap: 1.5rem;
+  }
+  .phases li {
+    padding-bottom: 1rem;
+  }
+}
