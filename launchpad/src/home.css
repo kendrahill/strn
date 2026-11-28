@@ -21,6 +21,7 @@
 .mast {
   background: black;
   border-bottom: 1px solid var(--line);
+  height: 70px;
 }
 .mast-inner,
 .foot,
@@ -32,7 +33,12 @@
   gap: 1rem;
 }
 .mast-inner {
-  min-height: 4.6rem;
+  height: 100%;
+  padding-inline: clamp(16px, 2.5vw, 48px);
+}
+.mast .mark {
+  width: 54px;
+  height: 54px;
 }
 .mast a,
 .foot a,
@@ -292,6 +298,13 @@
   .mast nav {
     gap: 0.8rem;
     font-size: 0.8rem;
+  }
+  .mast-inner {
+    gap: 0.5rem;
+  }
+  .mast .mark {
+    width: 46px;
+    height: 46px;
   }
   .outline {
     padding: 0.45rem 0.65rem;
