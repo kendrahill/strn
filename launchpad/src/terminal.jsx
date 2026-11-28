@@ -258,10 +258,6 @@ function App() {
       <header className="top-nav">
         <div className="nav-inner bounds">
           <div className="brand-group">
-            <a className="brand-link" href="/" aria-label="Saturn home">
-              <img src={logo} alt="" />
-            </a>
-            <span className="nav-divider" />
             <span className="network-pill">
               <span className="network-orb" />
               Stellar <i>/</i> Soroban

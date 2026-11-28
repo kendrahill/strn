@@ -12,9 +12,7 @@
 body { margin: 0; }
 [hidden] { display: none !important; }
 .shell { width: min(100% - 2.5rem, 72rem); margin-inline: auto; }
-.topbar { min-height: 5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 1px solid var(--line); }
-.brand { display: flex; align-items: center; gap: .75rem; color: inherit; font-size: 1.3rem; font-weight: 750; text-decoration: none; }
-.mark { display: block; width: 2rem; height: 2rem; }
+.topbar { min-height: 4rem; display: flex; justify-content: flex-end; align-items: center; border-bottom: 1px solid var(--line); }
 .wallet, .input-row { display: flex; align-items: center; gap: .65rem; }
 .wallet { gap: 1rem; }
 .docs-link { color: var(--muted); text-decoration: none; }
@@ -66,8 +64,8 @@ dd { margin: .15rem 0 0; font-variant-numeric: tabular-nums; overflow-wrap: anyw
 .preview-mode .shell { width: calc(100% - 2rem); }
 @media (max-width: 50rem) { .workspace { grid-template-columns: 1fr; } }
 @media (max-width: 37rem) {
-  .topbar { align-items: flex-start; padding-block: 1rem; }
-  .wallet { align-items: flex-end; flex-direction: column; }
+  .topbar { padding-block: .75rem; }
+  .wallet { flex-wrap: wrap; justify-content: flex-end; }
   .form-row { grid-template-columns: 1fr; }
   .lookup .input-row { align-items: stretch; flex-direction: column; }
 }
