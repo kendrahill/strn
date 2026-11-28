@@ -12,7 +12,7 @@ const destinations = [
 
 const page = window.location.pathname.replace(/(?:\/index\.html)?\/?$/, '/');
 const preview = page === '/launchpad/testnet/' && new URLSearchParams(window.location.search).get('preview') === '1';
-const mobile = window.matchMedia('(max-width: 640px)');
+const mobile = window.matchMedia('(width < 600px)');
 
 class SaturnShell extends HTMLElement {
   connectedCallback() {

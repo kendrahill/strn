@@ -97,7 +97,7 @@ html:has(.saturn-menu[open]) { overflow: hidden; }
 .saturn-menu-sections a { color: var(--saturn-shell-muted); font-size: .875rem; }
 .saturn-menu .saturn-prices { border-top: 1px solid var(--saturn-shell-border); padding-top: .8rem; }
 
-@media (max-width: 640px) {
+@media (width < 600px) {
   body.saturn-app { padding-left: 0; padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
   .saturn-rail { inset: auto 0 0; width: 100%; border-right: 0; border-top: 1px solid var(--saturn-shell-border); padding-bottom: env(safe-area-inset-bottom); }
   .saturn-rail > .saturn-logo, .saturn-header-links, .saturn-app-bar .saturn-prices, .saturn-rail-links a:not([data-mobile-shortcut]) { display: none; }
