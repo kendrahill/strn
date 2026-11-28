@@ -124,7 +124,7 @@ element('connect').addEventListener('click', () => run('action-status', async ()
   dismiss();
   owner = undefined;
   updateInputs();
-  element('connect').textContent = 'Connect Freighter';
+  element('connect').textContent = 'Connect wallet';
   const access = await requestAccess();
   if (access.error || !access.address) throw new Error(access.error?.message ?? 'Open Freighter to connect a wallet.');
   await assertWalletNetwork();

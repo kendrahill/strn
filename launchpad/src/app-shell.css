@@ -24,9 +24,9 @@ body.saturn-app > saturn-shell { display: block; position: sticky; z-index: 8; t
 .saturn-logo { display: grid; place-items: center; text-decoration: none; }
 .saturn-rail > .saturn-logo { height: var(--saturn-header-height); }
 .saturn-logo img { display: block; object-fit: contain; }
-.saturn-mobile-logo { display: none; }
+.saturn-mobile-logo, .saturn-mobile-wallet, .saturn-menu-toggle { display: none; }
 .saturn-rail-links { display: grid; justify-items: center; gap: 6px; padding: 10px 0; }
-.saturn-rail-links a {
+.saturn-rail-links a, .saturn-rail-links .saturn-menu-toggle {
   display: grid;
   place-content: center;
   justify-items: center;
@@ -40,6 +40,7 @@ body.saturn-app > saturn-shell { display: block; position: sticky; z-index: 8; t
   line-height: 1.2;
   text-decoration: none;
 }
+.saturn-rail-links .saturn-menu-toggle { display: none; border: 0; background: transparent; cursor: pointer; }
 .saturn-rail-links svg {
   width: 21px;
   height: 21px;
@@ -50,7 +51,7 @@ body.saturn-app > saturn-shell { display: block; position: sticky; z-index: 8; t
   stroke-linejoin: round;
 }
 .saturn-rail-links a:hover { color: var(--saturn-shell-text); background: #151b1a; }
-.saturn-rail-links a[aria-current] { color: var(--saturn-shell-accent); background: #102722; }
+.saturn-rail-links a[aria-current], .saturn-rail-links .saturn-menu-current { color: var(--saturn-shell-accent); background: #102722; }
 .saturn-app-bar {
   display: flex;
   align-items: center;
@@ -67,17 +68,43 @@ body.saturn-app > saturn-shell { display: block; position: sticky; z-index: 8; t
 .saturn-header-links a { color: var(--saturn-shell-text); text-decoration: none; font-size: .875rem; }
 .saturn-header-links a:hover { color: var(--saturn-shell-accent); }
 .saturn-app-action { border: 1px solid var(--saturn-shell-border); padding: .55rem .85rem; border-radius: 8px; }
-.saturn-rail a:focus-visible, .saturn-app-bar a:focus-visible { outline: 2px solid var(--saturn-shell-accent); outline-offset: 2px; }
+.saturn-rail a:focus-visible, .saturn-app-bar a:focus-visible, .saturn-rail button:focus-visible, .saturn-menu :is(a, button):focus-visible { outline: 2px solid var(--saturn-shell-accent); outline-offset: 2px; }
+
+.saturn-menu {
+  position: fixed;
+  inset: auto 0 0;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  max-height: min(85dvh, 36rem);
+  margin: 0;
+  padding: 1rem 1.2rem calc(1.25rem + env(safe-area-inset-bottom));
+  border: 1px solid var(--saturn-shell-border);
+  border-radius: 18px 18px 0 0;
+  background: #101413;
+  color: var(--saturn-shell-text);
+}
+.saturn-menu::backdrop { background: #0009; }
+html:has(.saturn-menu[open]) { overflow: hidden; }
+.saturn-menu-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: .65rem; }
+.saturn-menu-heading h2 { font-size: 1.25rem; margin: 0; }
+.saturn-menu-close { display: grid; place-items: center; width: 44px; min-height: 44px; padding: 0; border: 1px solid var(--saturn-shell-border); border-radius: 8px; background: transparent; color: inherit; font: inherit; font-size: 1.5rem; cursor: pointer; }
+.saturn-menu-links { display: grid; gap: .25rem; }
+.saturn-menu-links a { display: flex; align-items: center; gap: .75rem; min-height: 46px; padding-inline: .7rem; border-radius: 8px; color: inherit; text-decoration: none; }
+.saturn-menu-links a[aria-current], .saturn-menu-links a:hover { color: var(--saturn-shell-accent); background: #102722; }
+.saturn-menu-links svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.saturn-menu-sections { display: flex; flex-wrap: wrap; gap: 1rem; margin-block: 1rem; }
+.saturn-menu-sections a { color: var(--saturn-shell-muted); font-size: .875rem; }
+.saturn-menu .saturn-prices { border-top: 1px solid var(--saturn-shell-border); padding-top: .8rem; }
 
 @media (max-width: 640px) {
   body.saturn-app { padding-left: 0; padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
   .saturn-rail { inset: auto 0 0; width: 100%; border-right: 0; border-top: 1px solid var(--saturn-shell-border); padding-bottom: env(safe-area-inset-bottom); }
-  .saturn-rail > .saturn-logo, .saturn-header-links .saturn-section-link { display: none; }
+  .saturn-rail > .saturn-logo, .saturn-header-links, .saturn-app-bar .saturn-prices, .saturn-rail-links a:not([data-mobile-shortcut]) { display: none; }
   .saturn-rail-links { display: flex; justify-content: space-evenly; padding: 5px 0; }
+  .saturn-rail-links .saturn-menu-toggle { display: grid; }
   .saturn-mobile-logo { display: grid; flex: none; }
-  .saturn-app-bar { gap: .65rem; padding-inline: 12px; }
-  .saturn-prices { gap: .6rem; }
-  .saturn-prices div { gap: .25rem; }
-  .saturn-prices dt, .saturn-prices dd, .saturn-header-links a { font-size: .8rem; }
-  .saturn-app-action { padding-inline: .65rem; }
+  .saturn-app-bar { justify-content: space-between; padding-inline: 16px; }
+  .saturn-mobile-wallet { display: inline-flex; align-items: center; }
+  .saturn-mobile-wallet:is(a), .saturn-mobile-wallet button { box-sizing: border-box; min-height: 44px; padding: .55rem .9rem; border: 1px solid var(--saturn-shell-border); border-radius: 8px; color: var(--saturn-shell-text); font-size: .875rem; font-weight: 650; text-decoration: none; }
 }
