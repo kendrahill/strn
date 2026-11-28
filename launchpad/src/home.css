@@ -436,3 +436,8 @@
   }
   .floating-mark { width: 86%; margin-block: -6%; }
 }
+
+.planet-scene[data-concept="saturn-green"] .floating-mark {
+  opacity: 1;
+  background: linear-gradient(90deg, #00d4a8 0%, #ffffff 77%, #ffffff 100%);
+}
