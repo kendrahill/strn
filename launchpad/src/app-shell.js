@@ -44,7 +44,7 @@ class SaturnShell extends HTMLElement {
           </button></nav>
       </aside>
       <header class="saturn-app-bar">
-        <a class="saturn-logo saturn-mobile-logo" href="/" aria-label="Saturn home"><img src="${logo}" width="38" height="38" alt=""></a>
+        <a class="saturn-logo saturn-mobile-logo" href="/" aria-label="Saturn home"><img src="${logo}" width="46" height="46" alt=""></a>
         <dl class="saturn-prices" aria-label="Token prices" title="STRN and MOON prices are currently unavailable">${prices}</dl>
         <nav class="saturn-header-links" aria-label="Page links">${homeLinks}${action}</nav>
         ${wallet}
