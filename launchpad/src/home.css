@@ -360,10 +360,8 @@
 .planet-scene[data-concept="aurora"] .floating-mark {
   opacity: .76;
   background: linear-gradient(118deg, #233c49 12%, #78c7ae 32%, #e6fcf5 45%, #346b67 53%, #9dacc0 73%, #304749 92%);
-  background-size: 180% 100%;
-  animation: planet-float 9s ease-in-out infinite alternate, aurora-light 15s ease-in-out infinite alternate;
 }
-@keyframes aurora-light {to {background-position: 100% center;}}
+
 .planet-scene[data-concept="stardust"] .floating-mark {
   opacity: .88;
   background: url("./stars-near.svg") 0 0 / 90px 54px, url("./stars-far.svg") 12px 18px / 168px 101px,

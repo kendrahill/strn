@@ -1,7 +1,7 @@
 const hero = document.querySelector('.orbit-hero');
 const scene = hero.querySelector('.planet-scene');
 const concept = new URLSearchParams(location.search).get('concept');
-if (['aurora', 'stardust'].includes(concept)) scene.dataset.concept = concept;
+if (['floating', 'aurora', 'stardust'].includes(concept)) scene.dataset.concept = concept;
 
 function animateStars(canvas, context) {
   let width, height, stars, previousTime, frame;
